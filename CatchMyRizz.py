@@ -15,6 +15,7 @@ FPS = 120
 FramesPerSec = pygame.time.Clock()
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Falling blocks')
+bg = pygame.image.load("img/Bg.jpg")
 
 # GameObjects
 
@@ -88,9 +89,9 @@ while running:
         if event.type == QUIT:
             running = False
     displaysurface.fill((255, 255, 255))
+    displaysurface.blit(bg, (0,0))
     scoretext = myfont.render("Score = " + str(score), 1, (0, 0, 0))
     displaysurface.blit(scoretext, (5, 10))
-    print(score)
     PT1.move()
     for entity in all_sprites:
         displaysurface.blit(entity.surf, entity.rect)
