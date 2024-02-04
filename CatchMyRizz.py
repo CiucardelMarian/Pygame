@@ -23,7 +23,7 @@ bg = pygame.image.load("img/Bg.jpg")
 class Platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surf = pygame.image.load("img/iqos.png")
+        self.surf = pygame.image.load("img/BodoRemastered.png")
         self.rect = self.surf.get_rect(center=(WIDTH/2, HEIGHT))
 
         self.pos = vec((WIDTH / 2, HEIGHT))
@@ -55,7 +55,7 @@ def update():
 class Block(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surf = pygame.image.load("img/Pachet.png")
+        self.surf = pygame.image.load("img/Licenta.png")
         self.rect = self.surf.get_rect(center=(-100, -100))
         wrandom = random.randint(50, int(WIDTH - 50))
         self.pos = vec((wrandom, 0))
