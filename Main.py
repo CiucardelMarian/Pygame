@@ -6,8 +6,9 @@ pygame.init()
 vec = pygame.math.Vector2  # 2 for two-dimensional
 HEIGHT = 800
 WIDTH = 1000
-Vel = 3
+Vel = 5
 i = 0
+j = 1
 FPS = 120
 FramesPerSec = pygame.time.Clock()
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -54,12 +55,15 @@ class Block(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
     def update(self):
+        global j
         hits = pygame.sprite.spritecollide(self, all_sprites, False)
+        if len(hits) > j:
+            j += 1
+            createblock()
         for hit in hits:
             if hit == PT1:  # Check if the collided sprite is PT1 (Platform)
                 self.pos.y = hit.rect.top + 1
                 self.rect.midbottom = self.pos
-                createblock()
                 self.pos.x = PT1.pos.x
                 self.rect.midbottom = self.pos
 
@@ -70,6 +74,8 @@ def createblock():
     globals()['Blocks'+str(i)] = Block()
     all_sprites.add(globals()['Blocks'+str(i)])
     blocksgroup.add(globals()['Blocks' + str(i)])
+
+
 
 
 PT1 = Platform()
