@@ -10,6 +10,7 @@ WIDTH = 1000
 Vel = 5
 speed = 3
 score = 0
+maxscore=0
 myfont = pygame.font.SysFont("monospace", 16)
 FPS = 120
 FramesPerSec = pygame.time.Clock()
@@ -32,10 +33,10 @@ class Platform(pygame.sprite.Sprite):
         if pressed_keys[K_RIGHT]:
             self.pos.x += Vel
 
-        if self.pos.x > WIDTH - 50:
-            self.pos.x = WIDTH - 50
-        if self.pos.x < 50:
-            self.pos.x = 50
+        if self.pos.x > WIDTH - 100:
+            self.pos.x = WIDTH - 100
+        if self.pos.x < 100:
+            self.pos.x = 100
 
         self.rect.midbottom = self.pos
 
@@ -61,7 +62,7 @@ def createblock():
     blocksgroup.add(Blocks0)
 
 def update():
-    global score, speed, Vel, running
+    global score, speed, Vel, running, maxscore
     hits = pygame.sprite.spritecollide(PT1, blocksgroup, True)
     if hits:
         for hit in hits:
@@ -70,12 +71,26 @@ def update():
             Vel += 0.1
             createblock()
     else:
+        if score>maxscore:
+            maxscore=score
         for block in blocksgroup:
             if block.rect.y > PT1.rect.y:
-                running = False
-                print(f"Scorul final este: {score}")
+                # running = False # Scoate daca vrei sa se termine jocul dupa primul loss
+                print(f"Scorul acestui joc este: {score}")
+                print(f"Cel mai mare scor de pana acum este: {maxscore}")
+                reset()
 
-
+def reset():
+    global score, speed, Vel, running
+    score = 0
+    speed = 3
+    Vel = 5
+    for entity in all_sprites:
+        entity.kill()
+    PT1.pos = vec((WIDTH / 2, HEIGHT))
+    PT1.rect.midbottom = PT1.pos
+    all_sprites.add(PT1)
+    createblock()
 
 PT1 = Platform()
 Blocks0 = Block()
