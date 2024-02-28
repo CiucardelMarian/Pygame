@@ -1,10 +1,10 @@
 import pygame
 from pygame.locals import *
 import random
-import sys
-# Initialisation
+
+
 pygame.init()
-vec = pygame.math.Vector2  # 2 for two-dimensional
+vec = pygame.math.Vector2
 HEIGHT = 800
 WIDTH = 1000
 Vel = 5
@@ -16,16 +16,13 @@ FramesPerSec = pygame.time.Clock()
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Falling blocks')
 bg = pygame.image.load("img/Bg.jpg")
-
-# GameObjects
-
+running= True
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.surf = pygame.image.load("img/BodoRemastered.png")
         self.rect = self.surf.get_rect(center=(WIDTH/2, HEIGHT))
-
         self.pos = vec((WIDTH / 2, HEIGHT))
 
     def move(self):
@@ -43,15 +40,6 @@ class Platform(pygame.sprite.Sprite):
         self.rect.midbottom = self.pos
 
 
-def update():
-    global score, speed, Vel
-    hits = pygame.sprite.spritecollide(PT1, blocksgroup, True)
-    for hit in hits:
-        score += 1
-        speed += 0.1
-        Vel += 0.1
-        createblock()
-
 class Block(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -64,7 +52,7 @@ class Block(pygame.sprite.Sprite):
         self.pos.y += speed
         self.rect.midbottom = self.pos
         if self.pos.y > 800:
-            pygame.quit()
+            running=False
 
 
 def createblock():
@@ -72,6 +60,20 @@ def createblock():
     all_sprites.add(Blocks0 )
     blocksgroup.add(Blocks0)
 
+def update():
+    global score, speed, Vel, running
+    hits = pygame.sprite.spritecollide(PT1, blocksgroup, True)
+    if hits:
+        for hit in hits:
+            score += 1
+            speed += 0.1
+            Vel += 0.1
+            createblock()
+    else:
+        for block in blocksgroup:
+            if block.rect.y > PT1.rect.y:
+                running = False
+                print(f"Scorul final este: {score}")
 
 
 
@@ -83,7 +85,6 @@ blocksgroup.add(Blocks0)
 all_sprites.add(PT1)
 all_sprites.add(Blocks0)
 
-running = True
 while running:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -97,7 +98,7 @@ while running:
         displaysurface.blit(entity.surf, entity.rect)
     for entity in blocksgroup:
         entity.moveblock()
-        entity.update()
-    update()
+        update()
     pygame.display.update()
     FramesPerSec.tick(FPS)
+pygame.quit()
