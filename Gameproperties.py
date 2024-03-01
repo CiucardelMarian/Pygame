@@ -3,6 +3,7 @@ import pygame
 
 class Properties():
 
+    # __init__: This is the constructor of the Properties class. It initializes the game properties.
     vec = pygame.math.Vector2
     HEIGHT = 800
     WIDTH = 1000
