@@ -6,7 +6,7 @@ from BlocCazator import Block
 from Platforma import Platform
 
 
-class Game():
+class Game:
 
     def __init__(self):
         self.PT1 = Platform()
@@ -42,11 +42,10 @@ class Game():
     def update(self):
         hits = pygame.sprite.spritecollide(self.PT1, self.blocksgroup, True)
         if hits:
-            for hit in hits:
-                Proprieties.score += 1
-                Proprieties.speed += 0.1
-                Proprieties.Vel += 0.1
-                self.createblock()
+            Proprieties.score += 1
+            Proprieties.speed += 0.1
+            Proprieties.Vel += 0.1
+            self.createblock()
         else:
             if Proprieties.score > Proprieties.maxscore:
                 Proprieties.maxscore = Proprieties.score

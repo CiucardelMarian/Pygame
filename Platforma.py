@@ -2,7 +2,9 @@ import pygame
 from pygame.locals import *
 from Gameproprieties import Proprieties
 
+
 class Platform(pygame.sprite.Sprite):
+
     def __init__(self):
         super().__init__()
         self.surf = pygame.image.load("img/BodoRemastered.png")
@@ -20,5 +22,4 @@ class Platform(pygame.sprite.Sprite):
             self.pos.x = Proprieties.WIDTH - 100
         if self.pos.x < 100:
             self.pos.x = 100
-
         self.rect.midbottom = self.pos
