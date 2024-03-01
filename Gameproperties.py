@@ -1,7 +1,7 @@
 # This file contains the game proprieties and the game settings
 import pygame
 
-class Proprieties():
+class Properties():
 
     vec = pygame.math.Vector2
     HEIGHT = 800
