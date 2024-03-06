@@ -56,10 +56,13 @@ class Game:
                 Properties.maxscore = Properties.score
             for block in self.blocksgroup:
                 if block.rect.y > self.PT1.rect.y:
-                    # running = False # Scoate daca vrei sa se termine jocul dupa primul loss
+                    running = False # Scoate daca vrei sa se termine jocul dupa primul loss
                     print(f"Scorul acestui joc este: {Properties.score}")
                     print(f"Cel mai mare scor de pana acum este: {Properties.maxscore}")
-                    self.reset()
+                    # self.reset()
+                else:
+                    # handle the case where the block is still falling
+                    pass
 
     # run: This method runs the game. It loads the graphics, adds the platform and a block to the sprite group, and starts the game loop. The game loop updates the score, moves the platform and the block, and checks for collisions. It also updates the display and sets the frame rate.
     def run(self):
