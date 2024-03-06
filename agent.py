@@ -3,9 +3,10 @@ import random
 import numpy as np
 from collections import deque
 from training import Linear_QNet, QTrainer
-from MAIN import Game
+from AIplayed import Game
 from plothelper import plot
 from Gameproperties import Properties
+import pygame
 
 MAX_MEMORY = 1000_000
 BATCH_SIZE = 1000
@@ -60,47 +61,65 @@ class Agent:
             action = torch.argmax(prediction).item()
         return action
 
-def train():
-    plot_scores = []
-    plot_mean_scores = []
-    total_score = 0
-    record = 0
-    agent = Agent()
-    game = Game()
-    while True:
-        # get old state
-        state_old = agent.get_state(game)
+    def train(self):
+        plot_scores = []
+        plot_mean_scores = []
+        total_score = 0
+        Properties.maxscore = 0
+        game = Game()
+        game.loadgrafic()  # Initialize the game window, font, and clock
+        game.blocksgroup.add(game.Blocks0)
+        game.all_sprites.add(game.PT1)
 
-        # get move
-        final_move = agent.get_action(state_old)
+        while Properties.running:
+            # get old state
+            state_old = self.get_state(game)
 
-        # perform move and get new state
-        reward, done, score = game.play_step(final_move)
-        state_new = agent.get_state(game)
+            # get move
+            final_move = self.get_action(state_old)
 
-        # train short memory
-        agent.train_short_memory(state_old, final_move, reward, state_new, done)
+            # perform move and get new state
+            reward, done, score = game.play_step(final_move)
+            state_new = self.get_state(game)
 
-        # remember
-        agent.remember(state_old, final_move, reward, state_new, done)
+            # train short memory
+            self.train_short_memory(state_old, final_move, reward, state_new, done)
 
-        if done:
-            # train long memory, plot result
-            game.reset()
-            agent.n_games += 1
-            agent.train_long_memory()
+            # remember
+            self.remember(state_old, final_move, reward, state_new, done)
 
-            if score > record:
-                record = score
-                agent.model.save()
+            if done:
+                # train long memory, plot result
+                game.reset()
+                self.n_games += 1
+                self.train_long_memory()
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+                if score > record:
+                    record = score
+                    self.model.save()
 
-            plot_scores.append(score)
-            total_score += score
-            mean_score = total_score / agent.n_games
-            plot_mean_scores.append(mean_score)
-            plot(plot_scores, plot_mean_scores)
+                print('Game', self.n_games, 'Score', score, 'Record:', record)
+
+                plot_scores.append(score)
+                total_score += score
+                mean_score = total_score / self.n_games
+                plot_mean_scores.append(mean_score)
+                plot(plot_scores, plot_mean_scores)
+
+            # Update the display
+            game.displaysurface.fill((255, 255, 255))
+            game.displaysurface.blit(game.bg, (0, 0))
+            scoretext = game.myfont.render("Score = " + str(Properties.score), 1, (0, 0, 0))
+            game.displaysurface.blit(scoretext, (5, 10))
+            for entity in game.all_sprites:
+                game.displaysurface.blit(entity.surf, entity.rect)
+            for entity in game.blocksgroup:
+                entity.moveblock()
+
+            pygame.display.update()
+            game.FramesPerSec.tick(Properties.FPS)
 
 if __name__ == "__main__":
-    train()
+
+    agent = Agent()
+    agent.train()
