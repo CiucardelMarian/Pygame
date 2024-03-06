@@ -37,7 +37,7 @@ class Game:
         self.all_sprites.add(self.PT1)
         self.createblock()
 
-    # createblock: This method creates a new block and adds it to the sprite group.
+    # createblock: This method creates a new block and adds it to the sprite group..
     def createblock(self):
         self.Blocks0 = Block()
         self.all_sprites.add(self.Blocks0)
