@@ -37,65 +37,52 @@ class Game:
         self.Blocks0 = Block()
         self.all_sprites.add(self.Blocks0)
         self.blocksgroup.add(self.Blocks0)
+        self.update()
+        self.render()
 
     def update(self):
+
         hits = pygame.sprite.spritecollide(self.PT1, self.blocksgroup, True)
         if hits:
             Properties.score += 1
             Properties.speed += 0.1
             Properties.Vel += 0.1
             self.createblock()
+            return True
         else:
             if Properties.score > Properties.maxscore:
                 Properties.maxscore = Properties.score
             for block in self.blocksgroup:
                 if block.rect.y > self.PT1.rect.y:
-                    running = False
-                    print(f"Scorul acestui joc este: {Properties.score}")
-                    print(f"Cel mai mare scor de pana acum este: {Properties.maxscore}")
+                    # Properties.running = False
+                    return False
                     self.reset()
+                else:
+                    pass
+
+    def render(self):
+        self.displaysurface.fill((255, 255, 255))
+        self.displaysurface.blit(self.bg, (0, 0))
+        scoretext = self.myfont.render("Score = " + str(Properties.score), 1, (0, 0, 0))
+        self.displaysurface.blit(scoretext, (5, 10))
+        for entity in self.all_sprites:
+            self.displaysurface.blit(entity.surf, entity.rect)
+        for entity in self.blocksgroup:
+            entity.moveblock()
+            self.update()
+        pygame.display.update()
+        self.FramesPerSec.tick(Properties.FPS)
 
     def play_step(self, action):
         if action == 0:
             self.PT1.move_left()
         elif action == 1:
             self.PT1.move_right()
-        self.update()
-
-        reward = 0
-        hits = pygame.sprite.spritecollide(self.PT1, self.blocksgroup, True)
-        if hits:
+        reward=0
+        self.render()
+        if self.update():
             reward = 1
-            self.createblock()
-        elif self.Blocks0.pos.y > 800:
+        else:
             reward = -1
-            self.reset()
 
-        done = not Properties.running
-        score = Properties.score
-
-        return reward, done, score
-
-    def run(self):
-        self.loadgrafic()
-        self.blocksgroup.add(self.Blocks0)
-        self.all_sprites.add(self.PT1)
-
-        while Properties.running:
-            self.displaysurface.fill((255, 255, 255))
-            self.displaysurface.blit(self.bg, (0, 0))
-            scoretext = self.myfont.render("Score = " + str(Properties.score), 1, (0, 0, 0))
-            self.displaysurface.blit(scoretext, (5, 10))
-
-            for entity in self.all_sprites:
-                self.displaysurface.blit(entity.surf, entity.rect)
-            for entity in self.blocksgroup:
-                entity.moveblock()
-
-            self.update()
-
-            pygame.display.update()
-            self.FramesPerSec.tick(Properties.FPS)
-
-        pygame.quit()
-
+        return reward, Properties.running, Properties.score

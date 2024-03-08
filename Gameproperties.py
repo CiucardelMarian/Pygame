@@ -13,3 +13,4 @@ class Properties():
     maxscore = 0
     FPS = 120
     running = True
+    n_games = 0
