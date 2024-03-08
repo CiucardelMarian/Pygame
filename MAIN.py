@@ -38,7 +38,6 @@ class Game:
         self.createblock()
         Properties.running = True
 
-    # createblock: This method creates a new block and adds it to the sprite group..
     def createblock(self):
         self.Blocks0 = Block()
         self.all_sprites.add(self.Blocks0)
@@ -64,7 +63,6 @@ class Game:
                     # self.reset()
                     return False
                 else:
-                    # handle the case where the block is still falling
                     pass
 
     def render(self):
@@ -79,58 +77,66 @@ class Game:
             self.update()
         pygame.display.update()
         self.FramesPerSec.tick(Properties.FPS)
-
     def play_step(self, action):
         reward = 0
+        position = self.PT1.pos.x
         if action == 0:
             self.PT1.move_left()
+            if abs(self.PT1.pos.x - self.Blocks0.pos.x) < abs(self.Blocks0.pos.x - position):
+                reward -= 5 / (abs(self.Blocks0.pos.x - self.PT1.pos.x) + 1)
+            else:
+                reward += 5 / (abs(self.Blocks0.pos.x - self.PT1.pos.x) + 1)
             # if self.Blocks0.pos.x < self.PT1.pos.x:
             #     reward += 1
             # else:
             #     reward -= -1  # Reward for moving towards the block
-            reward += 1 / (abs(self.Blocks0.pos.x - self.PT1.pos.x) + 1)
         elif action == 1:
             self.PT1.move_right()
             # if self.Blocks0.pos.x > self.PT1.pos.x:
             #     reward += 1
             # else:
             #     reward -= 1  # Reward for moving towards the block
-            reward += 1 / (abs(self.Blocks0.pos.x - self.PT1.pos.x) + 1)
+            if abs(self.PT1.pos.x - self.Blocks0.pos.x) < abs(self.Blocks0.pos.x - position):
+                reward -= 5 / (abs(self.Blocks0.pos.x - self.PT1.pos.x) + 1)
+            else:
+                reward += 5 / (abs(self.Blocks0.pos.x - self.PT1.pos.x) + 1)
+        elif action == 2:
+            pass
 
         self.render()
         if self.update():
-            reward += 5 / (Properties.n_games + 1)  # Add a decay factor to the reward
+            reward += 1 / (Properties.n_games + 1)
         else:
-            reward -= 5 / (Properties.n_games + 1)  # Add a decay factor to the reward
+            reward -= 5 / (Properties.n_games + 1)
 
         return reward, Properties.running, Properties.score
 
     # run: This method runs the game. It loads the graphics, adds the platform and a block to the sprite group, and starts the game loop. The game loop updates the score, moves the platform and the block, and checks for collisions. It also updates the display and sets the frame rate.
-    def run(self):
-        self.loadgrafic()
-        self.blocksgroup.add(self.Blocks0)
-        self.all_sprites.add(self.PT1)
-        self.all_sprites.add(self.Blocks0)
+    # def run(self):
+    #     self.loadgrafic()
+    #     self.blocksgroup.add(self.Blocks0)
+    #     self.all_sprites.add(self.PT1)
+    #     self.all_sprites.add(self.Blocks0)
+    #
+    #     while Properties.running:
+    #         for event in pygame.event.get():
+    #             if event.type == QUIT:
+    #                 Properties.running = False
+    #         self.displaysurface.fill((255, 255, 255))
+    #         self.displaysurface.blit(self.bg, (0, 0))
+    #         scoretext = self.myfont.render("Score = " + str(Properties.score), 1, (0, 0, 0))
+    #         self.displaysurface.blit(scoretext, (5, 10))
+    #         self.PT1.move()
+    #         for entity in self.all_sprites:
+    #             self.displaysurface.blit(entity.surf, entity.rect)
+    #         for entity in self.blocksgroup:
+    #             entity.moveblock()
+    #             self.update()
+    #         pygame.display.update()
+    #         self.FramesPerSec.tick(Properties.FPS)
+    #     pygame.quit()
 
-        while Properties.running:
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    Properties.running = False
-            self.displaysurface.fill((255, 255, 255))
-            self.displaysurface.blit(self.bg, (0, 0))
-            scoretext = self.myfont.render("Score = " + str(Properties.score), 1, (0, 0, 0))
-            self.displaysurface.blit(scoretext, (5, 10))
-            self.PT1.move()
-            for entity in self.all_sprites:
-                self.displaysurface.blit(entity.surf, entity.rect)
-            for entity in self.blocksgroup:
-                entity.moveblock()
-                self.update()
-            pygame.display.update()
-            self.FramesPerSec.tick(Properties.FPS)
-        pygame.quit()
-
-if __name__ == "__main__":
-    game = Game()
-    game.run()
+# if __name__ == "__main__":
+#     game = Game()
+#     game.run()
 

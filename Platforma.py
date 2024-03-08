@@ -37,3 +37,6 @@ class Platform(pygame.sprite.Sprite):
         if self.pos.x > Properties.WIDTH - 100:
             self.pos.x = Properties.WIDTH - 100
         self.rect.midbottom = self.pos
+
+    def stay_in_place(self):
+        self.rect.midbottom = self.pos
