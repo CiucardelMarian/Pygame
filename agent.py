@@ -3,14 +3,14 @@ import random
 import numpy as np
 from collections import deque
 from training import Linear_QNet, QTrainer
-from MAIN import Game
+from AIplayed import Game
 from plothelper import plot
 from Gameproperties import Properties
 import pygame
 
 MAX_MEMORY = 1000_000
 BATCH_SIZE = 1000
-LR = 0.01
+LR = 0.001
 
 class Agent:
 
@@ -19,15 +19,13 @@ class Agent:
         self.epsilon = 100 # randomness
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = Linear_QNet(4, 50, 2)
+        self.model = Linear_QNet(2, 5, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
         state = [
             game.PT1.pos.x,  # Position of the platform
-            game.Blocks0.pos.x,  # Position of the falling block
-            game.Blocks0.pos.y,  # Velocity of the falling block
-            Properties.Vel
+            game.Blocks0.pos.x  # Position of the falling block  # Velocity of the falling block
         ]
         return state
 
@@ -47,10 +45,10 @@ class Agent:
 
     def get_action(self, state):
         # Epsilon-greedy strategy
-        self.epsilon = 80 - Properties.n_games
-        if random.randint(0, 100) < self.epsilon:
+        self.epsilon = 40 - Properties.n_games
+        if random.randint(0, 200) < self.epsilon:
             # Explore: select a random action
-            final_move = np.random.choice([0, 2])
+            final_move = random.randint(0, 3)
         else:
             # Exploit: select the action with max value (greedy)
             state0 = torch.tensor(state, dtype=torch.float)
@@ -59,6 +57,9 @@ class Agent:
         return final_move
 
     def train(self):
+        plot_scores = []
+        plot_mean_scores = []
+        total_score = 0
         game = Game()
         game.loadgrafic()
         game.blocksgroup.add(game.Blocks0)
@@ -78,15 +79,22 @@ class Agent:
             self.remember(state_old, final_move, reward, state_new, done)
 
             if Properties.running == False:
+                Properties.running=True
                 game.reset()
                 Properties.n_games += 1
                 self.train_long_memory()
 
-                if Properties.score > Properties.maxscore:
-                    Properties.maxscore = Properties.score
+                if score > Properties.maxscore:
+                    Properties.maxscore = score
                     self.model.save()
 
-                print('Game', Properties.n_games, 'Score', score, 'Record:', Properties.maxscore)
+                plot_scores.append(score)
+                total_score += score
+                mean_score = total_score / Properties.n_games
+                plot_mean_scores.append(mean_score)
+                plot(plot_scores, plot_mean_scores)
+
+                print('Game', Properties.n_games, 'Score', Properties.score, 'Record:', Properties.maxscore)
 
 if __name__ == "__main__":
 

@@ -7,10 +7,11 @@ class Properties():
     vec = pygame.math.Vector2
     HEIGHT = 800
     WIDTH = 1000
-    Vel = 5
-    speed = 3
+    Vel = 7 # la ce viteza se deplaseaza platforma
+    speed = 5 # la ce viteza cade blocul
     score = 0
     maxscore = 0
-    FPS = 120
+    FPS = 60
     running = True
     n_games = 0
+    reward=0
