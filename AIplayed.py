@@ -84,9 +84,9 @@ class Game:
                 self.PT1.stay_in_place()
         self.render()
         if self.update()==1:
-            Properties.reward = 4
+            Properties.reward = 10
         elif self.update()==2:
-            Properties.reward -= 4
+            Properties.reward -= 2
 
         return Properties.reward, Properties.running, Properties.score
 
