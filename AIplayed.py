@@ -50,8 +50,6 @@ class Game:
             self.createblock()
             return 1
         else:
-            if Properties.score > Properties.maxscore:
-                Properties.maxscore = Properties.score
             for block in self.blocksgroup:
                 if block.rect.y > self.PT1.rect.y:
                     Properties.running = False
